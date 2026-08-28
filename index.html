@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Storm Watch — Tournament Leaderboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0B0E14;
+    --panel: #131826;
+    --panel-2: #0F1420;
+    --line: #212A3D;
+    --storm: #7C5CFC;
+    --cyan: #34E7E4;
+    --live: #FF5D3B;
+    --text: #E8ECF4;
+    --muted: #7A8699;
+    --gold: #FFC24B;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height:100vh;
+    position: relative;
+    overflow-x:hidden;
+  }
+  /* ambient storm rings */
+  body::before{
+    content:"";
+    position: fixed;
+    top: -30vw; right: -30vw;
+    width: 70vw; height: 70vw;
+    border-radius:50%;
+    border: 1px solid rgba(124,92,252,0.10);
+    box-shadow: 0 0 0 60px rgba(124,92,252,0.03), 0 0 0 140px rgba(52,231,228,0.02);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .wrap{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding: 28px 24px 80px; }
+
+  /* HEADER */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-bottom: 22px; border-bottom: 1px solid var(--line);
+    margin-bottom: 40px; flex-wrap:wrap; gap:16px;
+  }
+  .brand{ display:flex; align-items:center; gap:14px; }
+  .brand-ring{
+    width:44px; height:44px; border-radius:50%;
+    border: 3px solid var(--storm);
+    border-top-color: var(--cyan);
+    animation: spin 6s linear infinite;
+    flex-shrink:0;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg);} }
+  .brand h1{
+    font-family:'Rajdhani', sans-serif; font-weight:700;
+    font-size: 26px; letter-spacing: 1px; margin:0; text-transform:uppercase;
+  }
+  .brand span{ color: var(--cyan); }
+  .brand p{ margin:2px 0 0; font-size:12.5px; color:var(--muted); letter-spacing:0.5px; }
+
+  #status-pill{
+    font-family:'JetBrains Mono', monospace; font-size:12px;
+    color: var(--muted); background: var(--panel);
+    border:1px solid var(--line); padding:8px 14px; border-radius:20px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .dot{ width:7px; height:7px; border-radius:50%; background: var(--muted); }
+  .dot.on{ background: var(--live); box-shadow:0 0 8px var(--live); animation: pulse 1.4s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
+
+  /* HERO */
+  .hero{
+    display:grid; grid-template-columns: 1.3fr 1fr; gap: 28px;
+    margin-bottom: 48px; align-items:center;
+  }
+  .hero h2{
+    font-family:'Rajdhani', sans-serif; font-weight:700;
+    font-size: clamp(32px, 5vw, 52px); line-height:1.02; margin:0 0 14px;
+    text-transform:uppercase; letter-spacing:0.5px;
+  }
+  .hero h2 em{ font-style:normal; color: var(--storm); }
+  .hero p{ color: var(--muted); font-size:15px; line-height:1.6; max-width: 46ch; margin:0; }
+
+  .eye{
+    font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing: 2px;
+    color: var(--cyan); text-transform:uppercase; margin-bottom:10px; display:block;
+  }
+
+  .lead-card{
+    background: linear-gradient(160deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line); border-radius: 16px; padding: 24px;
+    position:relative; overflow:hidden;
+  }
+  .lead-card::after{
+    content:""; position:absolute; width:180px; height:180px; border-radius:50%;
+    border:1px solid rgba(124,92,252,0.25); top:-60px; right:-60px;
+  }
+  .lead-label{ font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+  .lead-name{ font-family:'Rajdhani', sans-serif; font-weight:700; font-size:30px; margin:0 0 4px; }
+  .lead-score{ font-family:'JetBrains Mono', monospace; color: var(--gold); font-size:15px; }
+
+  /* SECTION HEADERS */
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom: 18px; flex-wrap:wrap; gap:8px;
+  }
+  .section-head h3{
+    font-family:'Rajdhani', sans-serif; text-transform:uppercase; letter-spacing:1px;
+    font-size:19px; margin:0; font-weight:700;
+  }
+  .section-head h3 span{ color:var(--cyan); }
+  .section-head small{ color:var(--muted); font-size:12px; font-family:'JetBrains Mono', monospace; }
+
+  /* LEADERBOARD */
+  .board{
+    background: var(--panel); border:1px solid var(--line); border-radius:14px;
+    overflow:hidden; margin-bottom: 52px;
+  }
+  table{ width:100%; border-collapse:collapse; }
+  thead th{
+    text-align:left; font-size:11px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--muted); font-weight:600; padding: 14px 18px; border-bottom:1px solid var(--line);
+  }
+  tbody tr{ border-bottom:1px solid var(--line); transition: background 0.15s; }
+  tbody tr:last-child{ border-bottom:none; }
+  tbody tr:hover{ background: rgba(124,92,252,0.06); }
+  tbody td{ padding: 14px 18px; font-size:14.5px; }
+  .rank-cell{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:16px; color:var(--muted); width:60px; }
+  tr.top1 .rank-cell{ color: var(--gold); }
+  tr.top2 .rank-cell{ color: #C9D3E0; }
+  tr.top3 .rank-cell{ color: #D89A63; }
+  .player-cell{ font-weight:600; display:flex; align-items:center; gap:10px; }
+  .live-tag{
+    font-size:10px; font-family:'JetBrains Mono', monospace; letter-spacing:1px;
+    background: rgba(255,93,59,0.15); color: var(--live); border:1px solid rgba(255,93,59,0.4);
+    padding:2px 7px; border-radius:5px; text-transform:uppercase;
+  }
+  .score-cell{ font-family:'JetBrains Mono', monospace; color: var(--cyan); }
+  .twitch-link{ color: var(--muted); text-decoration:none; font-size:13px; }
+  .twitch-link:hover{ color: var(--text); text-decoration:underline; }
+
+  /* STREAM GRID */
+  .streams{
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .stream-card{
+    background: var(--panel); border:1px solid var(--line); border-radius:14px;
+    overflow:hidden; display:flex; flex-direction:column; text-decoration:none; color:var(--text);
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .stream-card:hover{ transform: translateY(-3px); border-color: var(--storm); }
+  .thumb-wrap{ position:relative; aspect-ratio:16/9; background: var(--panel-2); overflow:hidden; }
+  .thumb-wrap img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .thumb-wrap.offline{ display:flex; align-items:center; justify-content:center; }
+  .thumb-wrap.offline .ring{
+    width:40px; height:40px; border-radius:50%; border:2px solid var(--line); border-top-color: var(--muted);
+  }
+  .live-badge{
+    position:absolute; top:10px; left:10px; background: var(--live); color:#0B0E14;
+    font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:700; letter-spacing:1px;
+    padding:3px 8px; border-radius:5px; display:flex; align-items:center; gap:5px;
+  }
+  .live-badge .p{ width:6px; height:6px; border-radius:50%; background:#0B0E14; animation: pulse 1.2s infinite; }
+  .viewer-badge{
+    position:absolute; bottom:10px; right:10px; background: rgba(0,0,0,0.6);
+    font-size:11px; font-family:'JetBrains Mono', monospace; padding:2px 7px; border-radius:5px;
+  }
+  .stream-info{ padding: 12px 14px 14px; }
+  .stream-name{ font-weight:600; font-size:14.5px; margin:0 0 3px; }
+  .stream-title{ font-size:12px; color:var(--muted); margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .stream-status{ font-size:11px; color:var(--muted); margin-top:6px; font-family:'JetBrains Mono', monospace; }
+
+  footer{ margin-top:60px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; text-align:center; }
+
+  @media (max-width: 760px){
+    .hero{ grid-template-columns: 1fr; }
+    thead{ display:none; }
+    tbody td{ display:block; padding: 6px 16px; }
+    tbody tr{ padding: 10px 0; }
+    .rank-cell{ font-size:20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="brand-ring"></div>
+      <div>
+        <h1>Storm<span>Watch</span></h1>
+        <p>Fortnite Tournament Ops Board</p>
+      </div>
+    </div>
+    <div id="status-pill"><span class="dot" id="status-dot"></span><span id="status-text">Loading data…</span></div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <span class="eye">// Live Bracket Tracking</span>
+      <h2>Watch the <em>circle</em> close in.</h2>
+      <p>Real-time cup standings pulled straight from the tournament sheet, plus every competitor's stream — so spectators always know who's dropping hot.</p>
+    </div>
+    <div class="lead-card">
+      <div class="lead-label">Current Leader</div>
+      <div class="lead-name" id="leader-name">—</div>
+      <div class="lead-score" id="leader-score">— pts</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h3>Leader<span>board</span></h3>
+      <small id="board-updated">refreshes automatically</small>
+    </div>
+    <div class="board">
+      <table>
+        <thead>
+          <tr><th>Rank</th><th>Player</th><th>Points</th><th>Twitch</th></tr>
+        </thead>
+        <tbody id="board-body">
+          <tr><td colspan="4" style="color:var(--muted); text-align:center; padding:30px;">Loading leaderboard…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h3>Live <span>Streams</span></h3>
+      <small id="live-count">checking Twitch…</small>
+    </div>
+    <div class="streams" id="stream-grid"></div>
+  </section>
+
+  <footer>Storm Watch · built for the cup · data via Google Sheets + Twitch Helix API</footer>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG — fill these in before you deploy
+   ============================================================ */
+const CONFIG = {
+  // Google Sheet published as CSV:
+  // File > Share > Publish to web > select the sheet tab > CSV > copy the URL here
+  SHEET_CSV_URL: "PASTE_YOUR_PUBLISHED_SHEET_CSV_URL_HERE",
+
+  // Your Cloudflare Worker URL (see twitch-worker.js) that proxies Twitch Helix.
+  // Leave blank to skip live-status checks (Twitch section will just stay empty).
+  TWITCH_WORKER_URL: "PASTE_YOUR_WORKER_URL_HERE",
+
+  // How often to re-check everything, in milliseconds
+  REFRESH_INTERVAL_MS: 30000,
+
+  // Expected sheet columns (case-insensitive header match):
+  //   Player, TwitchUsername, Points
+  // Extra columns are ignored. Order in the sheet doesn't matter — this sorts by Points.
+};
+
+/* ============================================================
+   Demo data — shown until CONFIG.SHEET_CSV_URL is set
+   ============================================================ */
+const DEMO_PLAYERS = [
+  { player: "Riggs", twitch: "riggs", points: 187 },
+  { player: "ZephyrFN", twitch: "zephyrfn", points: 164 },
+  { player: "NovaClutch", twitch: "novaclutch", points: 151 },
+  { player: "BlazeBuilds", twitch: "blazebuilds", points: 139 },
+  { player: "EchoSnipe", twitch: "echosnipe", points: 122 },
+];
+
+let players = [];
+
+function setStatus(text, live){
+  document.getElementById("status-text").textContent = text;
+  document.getElementById("status-dot").classList.toggle("on", !!live);
+}
+
+/* ---------- tiny CSV parser (handles quoted fields with commas) ---------- */
+function parseCSV(text){
+  const rows = [];
+  let row = [], field = "", inQuotes = false;
+  for (let i = 0; i < text.length; i++){
+    const c = text[i], next = text[i+1];
+    if (inQuotes){
+      if (c === '"' && next === '"'){ field += '"'; i++; }
+      else if (c === '"'){ inQuotes = false; }
+      else { field += c; }
+    } else {
+      if (c === '"'){ inQuotes = true; }
+      else if (c === ','){ row.push(field); field = ""; }
+      else if (c === '\n' || c === '\r'){
+        if (field !== "" || row.length){ row.push(field); rows.push(row); row = []; field = ""; }
+        if (c === '\r' && next === '\n') i++;
+      } else { field += c; }
+    }
+  }
+  if (field !== "" || row.length){ row.push(field); rows.push(row); }
+  return rows.filter(r => r.some(f => f.trim() !== ""));
+}
+
+function rowsToPlayers(rows){
+  const header = rows[0].map(h => h.trim().toLowerCase());
+  const iPlayer = header.findIndex(h => h.includes("player") || h.includes("name"));
+  const iTwitch = header.findIndex(h => h.includes("twitch"));
+  const iPoints = header.findIndex(h => h.includes("point") || h.includes("score"));
+  return rows.slice(1).map(r => ({
+    player: (r[iPlayer] || "").trim(),
+    twitch: (r[iTwitch] || "").trim().replace(/^@/, "").toLowerCase(),
+    points: parseFloat(r[iPoints]) || 0,
+  })).filter(p => p.player);
+}
+
+async function loadLeaderboard(){
+  if (!CONFIG.SHEET_CSV_URL || CONFIG.SHEET_CSV_URL.startsWith("PASTE_")){
+    players = DEMO_PLAYERS.slice();
+    setStatus("Demo data — connect a Google Sheet to go live", false);
+    renderBoard();
+    return;
+  }
+  try{
+    const res = await fetch(CONFIG.SHEET_CSV_URL + (CONFIG.SHEET_CSV_URL.includes("?") ? "&" : "?") + "t=" + Date.now());
+    if (!res.ok) throw new Error("sheet fetch failed: " + res.status);
+    const text = await res.text();
+    players = rowsToPlayers(parseCSV(text));
+    setStatus("Synced with tournament sheet", true);
+  } catch(err){
+    console.error(err);
+    setStatus("Couldn't reach the sheet — showing last known data", false);
+    if (!players.length) players = DEMO_PLAYERS.slice();
+  }
+  renderBoard();
+}
+
+function renderBoard(){
+  const sorted = players.slice().sort((a,b) => b.points - a.points);
+  const tbody = document.getElementById("board-body");
+  tbody.innerHTML = "";
+  sorted.forEach((p, idx) => {
+    const rank = idx + 1;
+    const tr = document.createElement("tr");
+    if (rank <= 3) tr.classList.add("top" + rank);
+    const live = liveMap[p.twitch];
+    tr.innerHTML = `
+      <td class="rank-cell">#${rank}</td>
+      <td class="player-cell">${escapeHtml(p.player)} ${live ? '<span class="live-tag">LIVE</span>' : ""}</td>
+      <td class="score-cell">${p.points.toLocaleString()}</td>
+      <td>${p.twitch ? `<a class="twitch-link" href="https://twitch.tv/${encodeURIComponent(p.twitch)}" target="_blank" rel="noopener">twitch.tv/${escapeHtml(p.twitch)}</a>` : "—"}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  document.getElementById("board-updated").textContent = "updated " + new Date().toLocaleTimeString();
+
+  const leader = sorted[0];
+  if (leader){
+    document.getElementById("leader-name").textContent = leader.player;
+    document.getElementById("leader-score").textContent = leader.points.toLocaleString() + " pts";
+  }
+  renderStreams(sorted);
+}
+
+/* ---------- Twitch live status via Cloudflare Worker proxy ---------- */
+let liveMap = {}; // { loginLower: streamData }
+
+async function loadLiveStatus(){
+  if (!CONFIG.TWITCH_WORKER_URL || CONFIG.TWITCH_WORKER_URL.startsWith("PASTE_")){
+    document.getElementById("live-count").textContent = "connect a Twitch worker to enable live status";
+    renderStreams(players);
+    return;
+  }
+  const logins = players.map(p => p.twitch).filter(Boolean);
+  if (!logins.length) return;
+  try{
+    const url = CONFIG.TWITCH_WORKER_URL + "?logins=" + encodeURIComponent(logins.join(","));
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("worker fetch failed: " + res.status);
+    const data = await res.json(); // expected: { streams: [ {user_login, title, viewer_count, thumbnail_url, game_name}, ... ] }
+    liveMap = {};
+    (data.streams || []).forEach(s => { liveMap[s.user_login.toLowerCase()] = s; });
+    document.getElementById("live-count").textContent = `${data.streams?.length || 0} of ${logins.length} live now`;
+  } catch(err){
+    console.error(err);
+    document.getElementById("live-count").textContent = "couldn't reach Twitch worker";
+  }
+  renderBoard();
+}
+
+function renderStreams(list){
+  const grid = document.getElementById("stream-grid");
+  grid.innerHTML = "";
+  const withTwitch = list.filter(p => p.twitch);
+  // live first, then alphabetical
+  withTwitch.sort((a,b) => {
+    const la = !!liveMap[a.twitch], lb = !!liveMap[b.twitch];
+    if (la !== lb) return la ? -1 : 1;
+    return a.player.localeCompare(b.player);
+  });
+  withTwitch.forEach(p => {
+    const live = liveMap[p.twitch];
+    const card = document.createElement("a");
+    card.className = "stream-card";
+    card.href = `https://twitch.tv/${encodeURIComponent(p.twitch)}`;
+    card.target = "_blank"; card.rel = "noopener";
+    card.innerHTML = `
+      <div class="thumb-wrap ${live ? "" : "offline"}">
+        ${live
+          ? `<img src="${(live.thumbnail_url || "").replace("{width}","440").replace("{height}","248")}" alt="${escapeHtml(p.player)} stream preview">
+             <span class="live-badge"><span class="p"></span>LIVE</span>
+             <span class="viewer-badge">${(live.viewer_count ?? 0).toLocaleString()} viewers</span>`
+          : `<div class="ring"></div>`
+        }
+      </div>
+      <div class="stream-info">
+        <p class="stream-name">${escapeHtml(p.player)}</p>
+        <p class="stream-title">${live ? escapeHtml(live.title || "") : "twitch.tv/" + escapeHtml(p.twitch)}</p>
+        <p class="stream-status">${live ? escapeHtml(live.game_name || "Fortnite") : "Offline"}</p>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+
+/* ---------- boot ---------- */
+async function tick(){
+  await loadLeaderboard();
+  await loadLiveStatus();
+}
+tick();
+setInterval(tick, CONFIG.REFRESH_INTERVAL_MS);
+</script>
+</body>
+</html>
