@@ -1,29 +1,36 @@
+
+Index · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Storm Watch — Tournament Leaderboard</title>
+<title>K&S FN Tournament — Leaderboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #0B0E14;
-    --panel: #131826;
-    --panel-2: #0F1420;
-    --line: #212A3D;
-    --storm: #7C5CFC;
-    --cyan: #34E7E4;
-    --live: #FF5D3B;
-    --text: #E8ECF4;
-    --muted: #7A8699;
-    --gold: #FFC24B;
+    --bg: #1A0F22;
+    --panel: rgba(20,10,28,0.68);
+    --panel-2: rgba(15,7,22,0.6);
+    --line: rgba(255,255,255,0.14);
+    --storm: #B45CF7;
+    --cyan: #FF5DA8;
+    --live: #FF7A29;
+    --text: #FFF7EC;
+    --muted: #E3C9E8;
+    --gold: #FFC93C;
   }
   *{ box-sizing:border-box; }
   html,body{ margin:0; padding:0; }
   body{
-    background: var(--bg);
+    background:
+      radial-gradient(1200px 800px at 8% -10%, rgba(255,201,60,0.55), transparent 60%),
+      radial-gradient(1000px 900px at 100% 0%, rgba(180,92,247,0.65), transparent 55%),
+      linear-gradient(150deg, #7A2AA8 0%, #C6379B 32%, #FF6A3D 66%, #FFC93C 100%);
+    background-attachment: fixed;
+    background-size: cover;
     color: var(--text);
     font-family: 'Inter', sans-serif;
     min-height:100vh;
@@ -37,24 +44,27 @@
     top: -30vw; right: -30vw;
     width: 70vw; height: 70vw;
     border-radius:50%;
-    border: 1px solid rgba(124,92,252,0.10);
-    box-shadow: 0 0 0 60px rgba(124,92,252,0.03), 0 0 0 140px rgba(52,231,228,0.02);
+    border: 1px solid rgba(255,255,255,0.16);
+    box-shadow: 0 0 0 60px rgba(255,255,255,0.05), 0 0 0 140px rgba(255,255,255,0.03);
     pointer-events:none;
     z-index:0;
   }
-
+ 
   .wrap{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding: 28px 24px 80px; }
-
+ 
   /* HEADER */
   header{
     display:flex; align-items:center; justify-content:space-between;
-    padding-bottom: 22px; border-bottom: 1px solid var(--line);
+    padding: 16px 22px; border-radius:16px;
+    background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--line);
     margin-bottom: 40px; flex-wrap:wrap; gap:16px;
+    box-shadow: 0 12px 40px rgba(40,10,50,0.25);
   }
   .brand{ display:flex; align-items:center; gap:14px; }
   .brand-ring{
     width:44px; height:44px; border-radius:50%;
-    border: 3px solid var(--storm);
+    border: 3px solid var(--gold);
     border-top-color: var(--cyan);
     animation: spin 6s linear infinite;
     flex-shrink:0;
@@ -64,50 +74,58 @@
     font-family:'Rajdhani', sans-serif; font-weight:700;
     font-size: 26px; letter-spacing: 1px; margin:0; text-transform:uppercase;
   }
-  .brand span{ color: var(--cyan); }
+  .brand span{ color: var(--gold); }
   .brand p{ margin:2px 0 0; font-size:12.5px; color:var(--muted); letter-spacing:0.5px; }
-
+ 
   #status-pill{
     font-family:'JetBrains Mono', monospace; font-size:12px;
-    color: var(--muted); background: var(--panel);
+    color: var(--muted); background: rgba(0,0,0,0.25);
     border:1px solid var(--line); padding:8px 14px; border-radius:20px;
     display:flex; align-items:center; gap:8px;
   }
   .dot{ width:7px; height:7px; border-radius:50%; background: var(--muted); }
   .dot.on{ background: var(--live); box-shadow:0 0 8px var(--live); animation: pulse 1.4s ease-in-out infinite; }
   @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
-
+ 
   /* HERO */
   .hero{
     display:grid; grid-template-columns: 1.3fr 1fr; gap: 28px;
-    margin-bottom: 48px; align-items:center;
+    margin-bottom: 48px; align-items:stretch;
+  }
+  .hero-copy{
+    background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border:1px solid var(--line); border-radius:18px; padding:32px;
+    display:flex; flex-direction:column; justify-content:center;
+    box-shadow: 0 16px 50px rgba(40,10,50,0.25);
   }
   .hero h2{
     font-family:'Rajdhani', sans-serif; font-weight:700;
     font-size: clamp(32px, 5vw, 52px); line-height:1.02; margin:0 0 14px;
     text-transform:uppercase; letter-spacing:0.5px;
   }
-  .hero h2 em{ font-style:normal; color: var(--storm); }
+  .hero h2 em{ font-style:normal; color: var(--gold); }
   .hero p{ color: var(--muted); font-size:15px; line-height:1.6; max-width: 46ch; margin:0; }
-
+ 
   .eye{
     font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing: 2px;
     color: var(--cyan); text-transform:uppercase; margin-bottom:10px; display:block;
   }
-
+ 
   .lead-card{
     background: linear-gradient(160deg, var(--panel), var(--panel-2));
-    border:1px solid var(--line); border-radius: 16px; padding: 24px;
-    position:relative; overflow:hidden;
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border:1px solid var(--line); border-radius: 18px; padding: 28px;
+    position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center;
+    box-shadow: 0 16px 50px rgba(40,10,50,0.25);
   }
   .lead-card::after{
     content:""; position:absolute; width:180px; height:180px; border-radius:50%;
-    border:1px solid rgba(124,92,252,0.25); top:-60px; right:-60px;
+    border:1px solid rgba(180,92,247,0.3); top:-60px; right:-60px;
   }
   .lead-label{ font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
   .lead-name{ font-family:'Rajdhani', sans-serif; font-weight:700; font-size:30px; margin:0 0 4px; }
   .lead-score{ font-family:'JetBrains Mono', monospace; color: var(--gold); font-size:15px; }
-
+ 
   /* SECTION HEADERS */
   .section-head{
     display:flex; align-items:baseline; justify-content:space-between;
@@ -115,15 +133,17 @@
   }
   .section-head h3{
     font-family:'Rajdhani', sans-serif; text-transform:uppercase; letter-spacing:1px;
-    font-size:19px; margin:0; font-weight:700;
+    font-size:19px; margin:0; font-weight:700; text-shadow: 0 2px 10px rgba(30,5,40,0.4);
   }
-  .section-head h3 span{ color:var(--cyan); }
-  .section-head small{ color:var(--muted); font-size:12px; font-family:'JetBrains Mono', monospace; }
-
+  .section-head h3 span{ color:var(--gold); }
+  .section-head small{ color:var(--text); opacity:0.85; font-size:12px; font-family:'JetBrains Mono', monospace; text-shadow: 0 2px 10px rgba(30,5,40,0.4); }
+ 
   /* LEADERBOARD */
   .board{
-    background: var(--panel); border:1px solid var(--line); border-radius:14px;
+    background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border:1px solid var(--line); border-radius:16px;
     overflow:hidden; margin-bottom: 52px;
+    box-shadow: 0 16px 50px rgba(40,10,50,0.25);
   }
   table{ width:100%; border-collapse:collapse; }
   thead th{
@@ -132,7 +152,7 @@
   }
   tbody tr{ border-bottom:1px solid var(--line); transition: background 0.15s; }
   tbody tr:last-child{ border-bottom:none; }
-  tbody tr:hover{ background: rgba(124,92,252,0.06); }
+  tbody tr:hover{ background: rgba(180,92,247,0.08); }
   tbody td{ padding: 14px 18px; font-size:14.5px; }
   .rank-cell{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:16px; color:var(--muted); width:60px; }
   tr.top1 .rank-cell{ color: var(--gold); }
@@ -141,24 +161,26 @@
   .player-cell{ font-weight:600; display:flex; align-items:center; gap:10px; }
   .live-tag{
     font-size:10px; font-family:'JetBrains Mono', monospace; letter-spacing:1px;
-    background: rgba(255,93,59,0.15); color: var(--live); border:1px solid rgba(255,93,59,0.4);
+    background: rgba(255,122,41,0.15); color: var(--live); border:1px solid rgba(255,122,41,0.4);
     padding:2px 7px; border-radius:5px; text-transform:uppercase;
   }
   .score-cell{ font-family:'JetBrains Mono', monospace; color: var(--cyan); }
   .twitch-link{ color: var(--muted); text-decoration:none; font-size:13px; }
   .twitch-link:hover{ color: var(--text); text-decoration:underline; }
-
+ 
   /* STREAM GRID */
   .streams{
     display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 18px;
   }
   .stream-card{
-    background: var(--panel); border:1px solid var(--line); border-radius:14px;
+    background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border:1px solid var(--line); border-radius:14px;
     overflow:hidden; display:flex; flex-direction:column; text-decoration:none; color:var(--text);
     transition: transform 0.15s, border-color 0.15s;
+    box-shadow: 0 10px 30px rgba(40,10,50,0.2);
   }
-  .stream-card:hover{ transform: translateY(-3px); border-color: var(--storm); }
+  .stream-card:hover{ transform: translateY(-3px); border-color: var(--gold); }
   .thumb-wrap{ position:relative; aspect-ratio:16/9; background: var(--panel-2); overflow:hidden; }
   .thumb-wrap img{ width:100%; height:100%; object-fit:cover; display:block; }
   .thumb-wrap.offline{ display:flex; align-items:center; justify-content:center; }
@@ -179,9 +201,13 @@
   .stream-name{ font-weight:600; font-size:14.5px; margin:0 0 3px; }
   .stream-title{ font-size:12px; color:var(--muted); margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .stream-status{ font-size:11px; color:var(--muted); margin-top:6px; font-family:'JetBrains Mono', monospace; }
-
-  footer{ margin-top:60px; padding-top:20px; border-top:1px solid var(--line); color:var(--muted); font-size:12px; text-align:center; }
-
+ 
+  footer{
+    margin-top:60px; padding: 14px 20px; border-radius:14px;
+    background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border:1px solid var(--line); color:var(--text); opacity:0.9; font-size:12px; text-align:center;
+  }
+ 
   @media (max-width: 760px){
     .hero{ grid-template-columns: 1fr; }
     thead{ display:none; }
@@ -193,20 +219,20 @@
 </head>
 <body>
 <div class="wrap">
-
+ 
   <header>
     <div class="brand">
       <div class="brand-ring"></div>
       <div>
-        <h1>Storm<span>Watch</span></h1>
-        <p>Fortnite Tournament Ops Board</p>
+        <h1>K&S <span>FN</span></h1>
+        <p>K&S FN Tournament — Ops Board</p>
       </div>
     </div>
     <div id="status-pill"><span class="dot" id="status-dot"></span><span id="status-text">Loading data…</span></div>
   </header>
-
+ 
   <section class="hero">
-    <div>
+    <div class="hero-copy">
       <span class="eye">// Live Bracket Tracking</span>
       <h2>Watch the <em>circle</em> close in.</h2>
       <p>Real-time cup standings pulled straight from the tournament sheet, plus every competitor's stream — so spectators always know who's dropping hot.</p>
@@ -217,7 +243,7 @@
       <div class="lead-score" id="leader-score">— pts</div>
     </div>
   </section>
-
+ 
   <section>
     <div class="section-head">
       <h3>Leader<span>board</span></h3>
@@ -234,7 +260,7 @@
       </table>
     </div>
   </section>
-
+ 
   <section>
     <div class="section-head">
       <h3>Live <span>Streams</span></h3>
@@ -242,10 +268,10 @@
     </div>
     <div class="streams" id="stream-grid"></div>
   </section>
-
-  <footer>Storm Watch · built for the cup · data via Google Sheets + Twitch Helix API</footer>
+ 
+  <footer>K&S FN Tournament · built for the cup · data via Google Sheets + Twitch Helix API</footer>
 </div>
-
+ 
 <script>
 /* ============================================================
    CONFIG — fill these in before you deploy
@@ -254,37 +280,35 @@ const CONFIG = {
   // Google Sheet published as CSV:
   // File > Share > Publish to web > select the sheet tab > CSV > copy the URL here
   SHEET_CSV_URL: "PASTE_YOUR_PUBLISHED_SHEET_CSV_URL_HERE",
-
+ 
   // Your Cloudflare Worker URL (see twitch-worker.js) that proxies Twitch Helix.
   // Leave blank to skip live-status checks (Twitch section will just stay empty).
   TWITCH_WORKER_URL: "PASTE_YOUR_WORKER_URL_HERE",
-
+ 
   // How often to re-check everything, in milliseconds
   REFRESH_INTERVAL_MS: 30000,
-
+ 
   // Expected sheet columns (case-insensitive header match):
   //   Player, TwitchUsername, Points
   // Extra columns are ignored. Order in the sheet doesn't matter — this sorts by Points.
 };
-
+ 
 /* ============================================================
    Demo data — shown until CONFIG.SHEET_CSV_URL is set
    ============================================================ */
 const DEMO_PLAYERS = [
-  { player: "Riggs", twitch: "riggs", points: 187 },
-  { player: "ZephyrFN", twitch: "zephyrfn", points: 164 },
-  { player: "NovaClutch", twitch: "novaclutch", points: 151 },
-  { player: "BlazeBuilds", twitch: "blazebuilds", points: 139 },
-  { player: "EchoSnipe", twitch: "echosnipe", points: 122 },
+  { player: "WhoIsMike416", twitch: "whoismike416", points: 187 },
+  { player: "iFolf", twitch: "ifolf", points: 164 },
+  { player: "Emip", twitch: "emip", points: 151 },
 ];
-
+ 
 let players = [];
-
+ 
 function setStatus(text, live){
   document.getElementById("status-text").textContent = text;
   document.getElementById("status-dot").classList.toggle("on", !!live);
 }
-
+ 
 /* ---------- tiny CSV parser (handles quoted fields with commas) ---------- */
 function parseCSV(text){
   const rows = [];
@@ -307,7 +331,7 @@ function parseCSV(text){
   if (field !== "" || row.length){ row.push(field); rows.push(row); }
   return rows.filter(r => r.some(f => f.trim() !== ""));
 }
-
+ 
 function rowsToPlayers(rows){
   const header = rows[0].map(h => h.trim().toLowerCase());
   const iPlayer = header.findIndex(h => h.includes("player") || h.includes("name"));
@@ -319,7 +343,7 @@ function rowsToPlayers(rows){
     points: parseFloat(r[iPoints]) || 0,
   })).filter(p => p.player);
 }
-
+ 
 async function loadLeaderboard(){
   if (!CONFIG.SHEET_CSV_URL || CONFIG.SHEET_CSV_URL.startsWith("PASTE_")){
     players = DEMO_PLAYERS.slice();
@@ -340,7 +364,7 @@ async function loadLeaderboard(){
   }
   renderBoard();
 }
-
+ 
 function renderBoard(){
   const sorted = players.slice().sort((a,b) => b.points - a.points);
   const tbody = document.getElementById("board-body");
@@ -359,7 +383,7 @@ function renderBoard(){
     tbody.appendChild(tr);
   });
   document.getElementById("board-updated").textContent = "updated " + new Date().toLocaleTimeString();
-
+ 
   const leader = sorted[0];
   if (leader){
     document.getElementById("leader-name").textContent = leader.player;
@@ -367,10 +391,10 @@ function renderBoard(){
   }
   renderStreams(sorted);
 }
-
+ 
 /* ---------- Twitch live status via Cloudflare Worker proxy ---------- */
 let liveMap = {}; // { loginLower: streamData }
-
+ 
 async function loadLiveStatus(){
   if (!CONFIG.TWITCH_WORKER_URL || CONFIG.TWITCH_WORKER_URL.startsWith("PASTE_")){
     document.getElementById("live-count").textContent = "connect a Twitch worker to enable live status";
@@ -393,7 +417,7 @@ async function loadLiveStatus(){
   }
   renderBoard();
 }
-
+ 
 function renderStreams(list){
   const grid = document.getElementById("stream-grid");
   grid.innerHTML = "";
@@ -428,11 +452,11 @@ function renderStreams(list){
     grid.appendChild(card);
   });
 }
-
+ 
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 }
-
+ 
 /* ---------- boot ---------- */
 async function tick(){
   await loadLeaderboard();
