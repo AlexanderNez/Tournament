@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Staff — Sunset Horizon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="wrap admin-shell">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="ring"></div>
+      <div>
+        <h1>SUNSET <span class="accent">HORIZON</span></h1>
+        <p class="sub">Staff — scoring &amp; stats</p>
+      </div>
+    </div>
+  </header>
+
+  <section class="panel">
+    <p class="eyebrow">// HOW SCORING WORKS</p>
+    <h2 class="hero-title" style="font-size:1.7rem;">All stats live in one Google Sheet.</h2>
+    <p style="margin-bottom:22px;">
+      There's no separate login here — whoever has editor access to the tournament
+      Google Sheet can update scores and bounty stats. The public board re-reads
+      the sheet automatically, so anything you save there shows up for everyone
+      within about 30 seconds.
+    </p>
+    <a href="#" id="openSheetBtn" class="btn" target="_blank" rel="noopener">Open the tournament sheet →</a>
+    <p class="hint" id="sheetNotConfigured" style="margin-top:14px; display:none;">
+      The sheet link hasn't been set yet — add it to <code>editUrl</code> in <code>js/sheets-config.js</code>.
+    </p>
+  </section>
+
+  <section class="panel">
+    <h2 style="margin-top:0;">Cheat sheet: which tab does what</h2>
+
+    <div style="margin-bottom:20px;">
+      <h3 style="margin-bottom:6px;">Teams tab</h3>
+      <p class="hint">Columns: <code>TeamID, TeamName, Player1, Player2, Discord1, Discord2</code>. Edit rosters here — add a sub, fix a typo'd tag, whatever. TeamID (team1, team2…) should never change once the tournament starts, since Game and Bounty tabs reference it.</p>
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <h3 style="margin-bottom:6px;">Game1 / Game2 / Game3 tabs</h3>
+      <p class="hint">Columns: <code>TeamID, TeamName, Placement, Eliminations</code>. After each game, fill in every team's finishing place (1–20) and elimination count. Points are calculated automatically by the site — you never type points directly.</p>
+    </div>
+
+    <div>
+      <h3 style="margin-bottom:6px;">Bounties tab</h3>
+      <p class="hint">Columns: <code>TeamID, TeamName, Headshots, Accuracy, HostElims, Assists, ClipLink, ClipWinner</code>. For the four stat bounties, type each duo's <strong>combined total across all 3 games</strong> — the site shows whoever has the highest number as the leader. For the clip bounty, paste each duo's clip link into <code>ClipLink</code>, and once staff pick a winner, type <code>YES</code> in that team's <code>ClipWinner</code> cell (leave everyone else's blank).</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Sunset Horizon Tournament · staff guide · <a href="index.html">View public board</a>
+  </footer>
+
+</div>
+
+<script src="js/sheets-config.js"></script>
+<script>
+  const link = document.getElementById("openSheetBtn");
+  if (SHEETS_CONFIG.editUrl && !SHEETS_CONFIG.editUrl.startsWith("PASTE_")) {
+    link.href = SHEETS_CONFIG.editUrl;
+  } else {
+    link.style.display = "none";
+    document.getElementById("sheetNotConfigured").style.display = "block";
+  }
+</script>
+</body>
+</html>
