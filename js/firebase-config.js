@@ -4,12 +4,13 @@
 // See README.md for the full step-by-step setup.
 // ─────────────────────────────────────────────────────────────────────────
 const firebaseConfig = {
-  apiKey: "PASTE_ME",
-  authDomain: "PASTE_ME.firebaseapp.com",
-  projectId: "PASTE_ME",
-  storageBucket: "PASTE_ME.appspot.com",
-  messagingSenderId: "PASTE_ME",
-  appId: "PASTE_ME"
+  apiKey: "AIzaSyAIqsNTYIsFJNjLJ-xueHeFTwlC8D1ugdM",
+  authDomain: "sunset-horizon.firebaseapp.com",
+  projectId: "sunset-horizon",
+  storageBucket: "sunset-horizon.firebasestorage.app",
+  messagingSenderId: "726614443162",
+  appId: "1:726614443162:web:47ca3c84c66a765611cb23",
+  measurementId: "G-0CCG1PGMJR"
 };
 
 firebase.initializeApp(firebaseConfig);
