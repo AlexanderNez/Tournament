@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>K&S FN Tournament — Leaderboard</title>
+<title>K&S FN Tournament</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -11,14 +11,18 @@
   :root{
     --bg: #1A0F22;
     --panel: rgba(20,10,28,0.68);
+    --panel-solid: #241432;
     --panel-2: rgba(15,7,22,0.6);
     --line: rgba(255,255,255,0.14);
+    --line-solid: #3E2350;
     --storm: #B45CF7;
-    --cyan: #FF5DA8;
-    --live: #FF7A29;
+    --pink: #FF5DA8;
+    --orange: #FF7A29;
+    --gold: #FFC93C;
     --text: #FFF7EC;
     --muted: #E3C9E8;
-    --gold: #FFC93C;
+    --good: #34D399;
+    --bad: #FF5D5D;
   }
   *{ box-sizing:border-box; }
   html,body{ margin:0; padding:0; }
@@ -27,145 +31,72 @@
       radial-gradient(1200px 800px at 8% -10%, rgba(255,201,60,0.55), transparent 60%),
       radial-gradient(1000px 900px at 100% 0%, rgba(180,92,247,0.65), transparent 55%),
       linear-gradient(150deg, #7A2AA8 0%, #C6379B 32%, #FF6A3D 66%, #FFC93C 100%);
-    background-attachment: fixed;
-    background-size: cover;
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    min-height:100vh;
-    position: relative;
-    overflow-x:hidden;
+    background-attachment: fixed; background-size: cover;
+    color: var(--text); font-family: 'Inter', sans-serif; min-height:100vh;
+    position: relative; overflow-x:hidden;
   }
-  /* ambient storm rings */
   body::before{
-    content:"";
-    position: fixed;
-    top: -30vw; right: -30vw;
-    width: 70vw; height: 70vw;
-    border-radius:50%;
-    border: 1px solid rgba(255,255,255,0.16);
+    content:""; position: fixed; top: -30vw; right: -30vw; width: 70vw; height: 70vw;
+    border-radius:50%; border: 1px solid rgba(255,255,255,0.16);
     box-shadow: 0 0 0 60px rgba(255,255,255,0.05), 0 0 0 140px rgba(255,255,255,0.03);
-    pointer-events:none;
-    z-index:0;
+    pointer-events:none; z-index:0;
   }
- 
-  .wrap{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding: 28px 24px 80px; }
+  .wrap{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding: 28px 24px 60px; }
+  button{ font-family:'Inter', sans-serif; font-weight:600; border:none; border-radius:10px; padding: 11px 18px; cursor:pointer; font-size:14px; transition: transform 0.1s, opacity 0.15s; }
+  button:active{ transform: scale(0.98); }
+  .btn-primary{ background: var(--gold); color:#1A0F22; }
+  .btn-primary:hover{ opacity:0.9; }
+  .btn-secondary{ background: transparent; color:var(--text); border:1px solid var(--line-solid); }
+  .btn-secondary:hover{ border-color: var(--storm); }
+  .btn-danger{ background: transparent; color: var(--bad); border:1px solid rgba(255,93,93,0.4); }
  
   /* HEADER */
   header{
     display:flex; align-items:center; justify-content:space-between;
     padding: 16px 22px; border-radius:16px;
     background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border: 1px solid var(--line);
-    margin-bottom: 40px; flex-wrap:wrap; gap:16px;
+    border: 1px solid var(--line); margin-bottom: 40px; flex-wrap:wrap; gap:16px;
     box-shadow: 0 12px 40px rgba(40,10,50,0.25);
   }
   .brand{ display:flex; align-items:center; gap:14px; }
-  .brand-ring{
-    width:44px; height:44px; border-radius:50%;
-    border: 3px solid var(--gold);
-    border-top-color: var(--cyan);
-    animation: spin 6s linear infinite;
-    flex-shrink:0;
-  }
+  .brand-ring{ width:44px; height:44px; border-radius:50%; border: 3px solid var(--gold); border-top-color: var(--pink); animation: spin 6s linear infinite; flex-shrink:0; }
   @keyframes spin{ to{ transform: rotate(360deg);} }
-  .brand h1{
-    font-family:'Rajdhani', sans-serif; font-weight:700;
-    font-size: 26px; letter-spacing: 1px; margin:0; text-transform:uppercase;
-  }
+  .brand h1{ font-family:'Rajdhani', sans-serif; font-weight:700; font-size: 26px; letter-spacing: 1px; margin:0; text-transform:uppercase; }
   .brand span{ color: var(--gold); }
   .brand p{ margin:2px 0 0; font-size:12.5px; color:var(--muted); letter-spacing:0.5px; }
- 
-  #status-pill{
-    font-family:'JetBrains Mono', monospace; font-size:12px;
-    color: var(--muted); background: rgba(0,0,0,0.25);
-    border:1px solid var(--line); padding:8px 14px; border-radius:20px;
-    display:flex; align-items:center; gap:8px;
-  }
+  #status-pill{ font-family:'JetBrains Mono', monospace; font-size:12px; color: var(--muted); background: rgba(0,0,0,0.25); border:1px solid var(--line); padding:8px 14px; border-radius:20px; display:flex; align-items:center; gap:8px; }
   .dot{ width:7px; height:7px; border-radius:50%; background: var(--muted); }
-  .dot.on{ background: var(--live); box-shadow:0 0 8px var(--live); animation: pulse 1.4s ease-in-out infinite; }
+  .dot.on{ background: var(--good); box-shadow:0 0 8px var(--good); animation: pulse 1.4s ease-in-out infinite; }
   @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.35; } }
  
   /* HERO */
-  .hero{
-    display:grid; grid-template-columns: 1.3fr 1fr; gap: 28px;
-    margin-bottom: 48px; align-items:stretch;
-  }
-  .hero-copy{
-    background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border:1px solid var(--line); border-radius:18px; padding:32px;
-    display:flex; flex-direction:column; justify-content:center;
-    box-shadow: 0 16px 50px rgba(40,10,50,0.25);
-  }
-  .hero h2{
-    font-family:'Rajdhani', sans-serif; font-weight:700;
-    font-size: clamp(32px, 5vw, 52px); line-height:1.02; margin:0 0 14px;
-    text-transform:uppercase; letter-spacing:0.5px;
-  }
+  .hero{ display:grid; grid-template-columns: 1.3fr 1fr; gap: 28px; margin-bottom: 48px; align-items:stretch; }
+  .hero-copy{ background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border:1px solid var(--line); border-radius:18px; padding:32px; display:flex; flex-direction:column; justify-content:center; box-shadow: 0 16px 50px rgba(40,10,50,0.25); }
+  .hero h2{ font-family:'Rajdhani', sans-serif; font-weight:700; font-size: clamp(32px, 5vw, 52px); line-height:1.02; margin:0 0 14px; text-transform:uppercase; letter-spacing:0.5px; }
   .hero h2 em{ font-style:normal; color: var(--gold); }
   .hero p{ color: var(--muted); font-size:15px; line-height:1.6; max-width: 46ch; margin:0; }
- 
-  .eye{
-    font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing: 2px;
-    color: var(--cyan); text-transform:uppercase; margin-bottom:10px; display:block;
-  }
- 
-  .lead-card{
-    background: linear-gradient(160deg, var(--panel), var(--panel-2));
-    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border:1px solid var(--line); border-radius: 18px; padding: 28px;
-    position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center;
-    box-shadow: 0 16px 50px rgba(40,10,50,0.25);
-  }
-  .lead-card::after{
-    content:""; position:absolute; width:180px; height:180px; border-radius:50%;
-    border:1px solid rgba(180,92,247,0.3); top:-60px; right:-60px;
-  }
+  .eye{ font-family:'JetBrains Mono', monospace; font-size:11.5px; letter-spacing: 2px; color: var(--pink); text-transform:uppercase; margin-bottom:10px; display:block; }
+  .lead-card{ background: linear-gradient(160deg, var(--panel), var(--panel-2)); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border:1px solid var(--line); border-radius: 18px; padding: 28px; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:center; box-shadow: 0 16px 50px rgba(40,10,50,0.25); }
+  .lead-card::after{ content:""; position:absolute; width:180px; height:180px; border-radius:50%; border:1px solid rgba(180,92,247,0.3); top:-60px; right:-60px; }
   .lead-label{ font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
   .lead-name{ font-family:'Rajdhani', sans-serif; font-weight:700; font-size:30px; margin:0 0 4px; }
   .lead-score{ font-family:'JetBrains Mono', monospace; color: var(--gold); font-size:15px; }
- 
-  /* SPOTLIGHT ROTATION (Current Leader / Bounty stats cycling in the same card) */
-  #spotlight-label, #spotlight-name, #spotlight-score{
-    transition: opacity 0.35s ease, transform 0.35s ease;
-  }
-  .spotlight-fade #spotlight-label, .spotlight-fade #spotlight-name, .spotlight-fade #spotlight-score{
-    opacity: 0; transform: translateY(6px);
-  }
-  .spotlight-dots{
-    display:flex; gap:6px; margin-top:16px;
-  }
-  .spotlight-dots .dot-ind{
-    width:6px; height:6px; border-radius:50%; background: var(--line);
-    transition: background 0.3s, transform 0.3s;
-  }
-  .spotlight-dots .dot-ind.active{
-    background: var(--gold); transform: scale(1.3);
-  }
+  #spotlight-label, #spotlight-name, #spotlight-score{ transition: opacity 0.35s ease, transform 0.35s ease; }
+  .spotlight-fade #spotlight-label, .spotlight-fade #spotlight-name, .spotlight-fade #spotlight-score{ opacity: 0; transform: translateY(6px); }
+  .spotlight-dots{ display:flex; gap:6px; margin-top:16px; }
+  .spotlight-dots .dot-ind{ width:6px; height:6px; border-radius:50%; background: var(--line-solid); transition: background 0.3s, transform 0.3s; }
+  .spotlight-dots .dot-ind.active{ background: var(--gold); transform: scale(1.3); }
  
   /* SECTION HEADERS */
-  .section-head{
-    display:flex; align-items:baseline; justify-content:space-between;
-    margin-bottom: 18px; flex-wrap:wrap; gap:8px;
-  }
-  .section-head h3{
-    font-family:'Rajdhani', sans-serif; text-transform:uppercase; letter-spacing:1px;
-    font-size:19px; margin:0; font-weight:700; text-shadow: 0 2px 10px rgba(30,5,40,0.4);
-  }
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom: 18px; flex-wrap:wrap; gap:8px; }
+  .section-head h3{ font-family:'Rajdhani', sans-serif; text-transform:uppercase; letter-spacing:1px; font-size:19px; margin:0; font-weight:700; text-shadow: 0 2px 10px rgba(30,5,40,0.4); }
   .section-head h3 span{ color:var(--gold); }
   .section-head small{ color:var(--text); opacity:0.85; font-size:12px; font-family:'JetBrains Mono', monospace; text-shadow: 0 2px 10px rgba(30,5,40,0.4); }
  
   /* LEADERBOARD */
-  .board{
-    background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border:1px solid var(--line); border-radius:16px;
-    overflow:hidden; margin-bottom: 52px;
-    box-shadow: 0 16px 50px rgba(40,10,50,0.25);
-  }
+  .board{ background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border:1px solid var(--line); border-radius:16px; overflow:hidden; margin-bottom: 52px; box-shadow: 0 16px 50px rgba(40,10,50,0.25); }
   table{ width:100%; border-collapse:collapse; }
-  thead th{
-    text-align:left; font-size:11px; letter-spacing:1.5px; text-transform:uppercase;
-    color:var(--muted); font-weight:600; padding: 14px 18px; border-bottom:1px solid var(--line);
-  }
+  thead th{ text-align:left; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:600; padding: 14px 18px; border-bottom:1px solid var(--line); }
   tbody tr{ border-bottom:1px solid var(--line); transition: background 0.15s; }
   tbody tr:last-child{ border-bottom:none; }
   tbody tr:hover{ background: rgba(180,92,247,0.08); }
@@ -174,54 +105,13 @@
   tr.top1 .rank-cell{ color: var(--gold); }
   tr.top2 .rank-cell{ color: #C9D3E0; }
   tr.top3 .rank-cell{ color: #D89A63; }
-  .player-cell{ font-weight:600; display:flex; align-items:center; gap:10px; }
-  .live-tag{
-    font-size:10px; font-family:'JetBrains Mono', monospace; letter-spacing:1px;
-    background: rgba(255,122,41,0.15); color: var(--live); border:1px solid rgba(255,122,41,0.4);
-    padding:2px 7px; border-radius:5px; text-transform:uppercase;
-  }
-  .score-cell{ font-family:'JetBrains Mono', monospace; color: var(--cyan); }
+  .player-cell{ font-weight:600; }
+  .score-cell{ font-family:'JetBrains Mono', monospace; color: var(--pink); }
   .twitch-link{ color: var(--muted); text-decoration:none; font-size:13px; }
   .twitch-link:hover{ color: var(--text); text-decoration:underline; }
- 
-  /* STREAM GRID */
-  .streams{
-    display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 18px;
-  }  .stream-card{
-    background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border:1px solid var(--line); border-radius:14px;
-    overflow:hidden; display:flex; flex-direction:column; text-decoration:none; color:var(--text);
-    transition: transform 0.15s, border-color 0.15s;
-    box-shadow: 0 10px 30px rgba(40,10,50,0.2);
-  }
-  .stream-card:hover{ transform: translateY(-3px); border-color: var(--gold); }
-  .thumb-wrap{ position:relative; aspect-ratio:16/9; background: var(--panel-2); overflow:hidden; }
-  .thumb-wrap img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .thumb-wrap.offline{ display:flex; align-items:center; justify-content:center; }
-  .thumb-wrap.offline .ring{
-    width:40px; height:40px; border-radius:50%; border:2px solid var(--line); border-top-color: var(--muted);
-  }
-  .live-badge{
-    position:absolute; top:10px; left:10px; background: var(--live); color:#0B0E14;
-    font-family:'JetBrains Mono', monospace; font-size:10px; font-weight:700; letter-spacing:1px;
-    padding:3px 8px; border-radius:5px; display:flex; align-items:center; gap:5px;
-  }
-  .live-badge .p{ width:6px; height:6px; border-radius:50%; background:#0B0E14; animation: pulse 1.2s infinite; }
-  .viewer-badge{
-    position:absolute; bottom:10px; right:10px; background: rgba(0,0,0,0.6);
-    font-size:11px; font-family:'JetBrains Mono', monospace; padding:2px 7px; border-radius:5px;
-  }
-  .stream-info{ padding: 12px 14px 14px; }
-  .stream-name{ font-weight:600; font-size:14.5px; margin:0 0 3px; }
-  .stream-title{ font-size:12px; color:var(--muted); margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .stream-status{ font-size:11px; color:var(--muted); margin-top:6px; font-family:'JetBrains Mono', monospace; }
- 
-  footer{
-    margin-top:60px; padding: 14px 20px; border-radius:14px;
-    background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border:1px solid var(--line); color:var(--text); opacity:0.9; font-size:12px; text-align:center;
-  }
+  footer{ margin-top:60px; padding: 14px 20px; border-radius:14px; background: var(--panel); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border:1px solid var(--line); color:var(--text); opacity:0.9; font-size:12px; text-align:center; }
+  footer a{ color: var(--muted); text-decoration:none; }
+  footer a:hover{ color: var(--text); text-decoration:underline; }
  
   @media (max-width: 760px){
     .hero{ grid-template-columns: 1fr; }
@@ -230,9 +120,47 @@
     tbody tr{ padding: 10px 0; }
     .rank-cell{ font-size:20px; }
   }
+ 
+  /* ===================== ADMIN VIEW ===================== */
+  #admin-view{ display:none; }
+  #admin-view .wrap{ max-width:1100px; padding-bottom: 100px; }
+  #login-screen{ max-width: 380px; margin: 90px auto; background: var(--panel-solid); border:1px solid var(--line-solid); border-radius:16px; padding: 32px; text-align:center; }
+  #login-screen h2{ font-family:'Rajdhani', sans-serif; font-size:22px; margin:0 0 6px; text-transform:uppercase; }
+  #login-screen p{ color:var(--muted); font-size:13px; margin:0 0 20px; }
+  #login-screen input{ width:100%; padding:12px 14px; border-radius:10px; border:1px solid var(--line-solid); background: #150E1F; color:var(--text); font-size:15px; margin-bottom:12px; }
+  #login-error{ color: var(--bad); font-size:13px; min-height:18px; margin-bottom:8px; }
+  #admin-app{ display:none; }
+  .admin-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+  .admin-header h1{ font-family:'Rajdhani', sans-serif; font-weight:700; font-size:24px; margin:0; text-transform:uppercase; letter-spacing:1px; }
+  .admin-header h1 span{ color: var(--gold); }
+  .admin-header p{ margin:2px 0 0; font-size:12px; color:var(--muted); }
+  .tabs{ display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .tab-btn{ background:var(--panel-solid); border:1px solid var(--line-solid); color:var(--muted); padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-family:'Inter',sans-serif; }
+  .tab-btn.active{ background:var(--storm); color:#fff; border-color:var(--storm); }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; }
+  .admin-table{ width:100%; border-collapse:collapse; background:var(--panel-solid); border-radius:10px; overflow:hidden; margin-bottom:16px; }
+  .admin-table th{ background:#2E1B3D; color:var(--gold); font-size:11px; text-transform:uppercase; letter-spacing:0.5px; padding:8px 6px; text-align:left; position:sticky; top:0; }
+  .admin-table td{ padding:5px 6px; border-bottom:1px solid var(--line-solid); font-size:13px; }
+  .admin-table input, .admin-table select{ width:100%; padding:6px 7px; border-radius:6px; border:1px solid var(--line-solid); background:#150E1F; color:var(--text); font-size:13px; font-family:'JetBrains Mono', monospace; }
+  .admin-table input[type=text]{ font-family:'Inter',sans-serif; }
+  .table-scroll{ max-height:520px; overflow:auto; border-radius:10px; }
+  .settings-row{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .settings-row label{ min-width:160px; color:var(--muted); font-size:13px; }
+  .settings-row input{ width:100px; padding:6px 7px; border-radius:6px; border:1px solid var(--line-solid); background:#150E1F; color:var(--text); font-family:'JetBrains Mono', monospace; }
+  .game-controls{ display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+  .game-controls select{ width:auto; padding:8px 12px; border-radius:8px; border:1px solid var(--line-solid); background:#150E1F; color:var(--text); }
+  #save-bar{ position:sticky; bottom:0; background: rgba(26,15,34,0.9); backdrop-filter: blur(10px); padding:14px 20px; margin: 16px -20px -100px; display:flex; align-items:center; gap:14px; border-top:1px solid var(--line-solid); border-radius: 0 0 14px 14px; }
+  #save-status{ font-size:13px; color:var(--muted); }
+  .placement-scale-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:8px; margin-bottom:20px; }
+  .placement-scale-grid div{ background:var(--panel-solid); border:1px solid var(--line-solid); border-radius:8px; padding:8px; text-align:center; }
+  .placement-scale-grid label{ display:block; font-size:11px; color:var(--muted); margin-bottom:4px; }
 </style>
 </head>
 <body>
+ 
+<!-- ===================== PUBLIC VIEW ===================== -->
+<div id="public-view">
 <div class="wrap">
  
   <header>
@@ -250,7 +178,7 @@
     <div class="hero-copy">
       <span class="eye">// Live Bracket Tracking</span>
       <h2>Watch the <em>circle</em> close in.</h2>
-      <p>Real-time cup standings pulled straight from the tournament sheet, plus every competitor's stream — so spectators always know who's dropping hot.</p>
+      <p>Real-time cup standings, updated the moment staff enter each game's results — refreshes automatically for anyone watching.</p>
     </div>
     <div class="lead-card" id="spotlight-card">
       <div class="lead-label" id="spotlight-label">Current Leader</div>
@@ -267,9 +195,7 @@
     </div>
     <div class="board">
       <table>
-        <thead>
-          <tr><th>Rank</th><th>Team</th><th>Roster</th><th>Points</th></tr>
-        </thead>
+        <thead><tr><th>Rank</th><th>Team</th><th>Roster</th><th>Points</th></tr></thead>
         <tbody id="board-body">
           <tr><td colspan="4" style="color:var(--muted); text-align:center; padding:30px;">Loading leaderboard…</td></tr>
         </tbody>
@@ -277,33 +203,104 @@
     </div>
   </section>
  
-  <section>
-    <div class="section-head">
-      <h3>Live <span>Streams</span></h3>
-      <small id="live-count">checking Twitch…</small>
-    </div>
-    <div class="streams" id="stream-grid"></div>
-  </section>
+  <footer>K&S FN Tournament · built for the cup · <a href="#" onclick="showAdminView(); return false;">Staff Login</a></footer>
+</div>
+</div>
  
-  <footer>K&S FN Tournament · built for the cup · data via the tournament backend + Twitch Helix API</footer>
+<!-- ===================== ADMIN VIEW ===================== -->
+<div id="admin-view">
+<div class="wrap">
+ 
+  <div id="login-screen">
+    <h2>Admin Login</h2>
+    <p>K&S FN Tournament — staff access only</p>
+    <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+    <div id="login-error"></div>
+    <button class="btn-primary" style="width:100%; margin-bottom:10px;" onclick="doLogin()">Log In</button>
+    <button class="btn-secondary" style="width:100%" onclick="showPublicView()">Back to public site</button>
+  </div>
+ 
+  <div id="admin-app">
+    <div class="admin-header">
+      <div>
+        <h1>K&S <span>FN</span> Admin</h1>
+        <p>Enter placements and player stats — the public leaderboard updates automatically.</p>
+      </div>
+      <button class="btn-secondary" onclick="showPublicView()">View Public Site</button>
+    </div>
+ 
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="teams">Teams</button>
+      <button class="tab-btn" data-tab="games">Game Stats</button>
+      <button class="tab-btn" data-tab="settings">Scoring Settings</button>
+    </div>
+ 
+    <div class="tab-panel active" id="tab-teams">
+      <div class="table-scroll">
+        <table class="admin-table">
+          <thead><tr><th>Team Name</th><th>Player 1</th><th>P1 Twitch</th><th>Player 2</th><th>P2 Twitch</th><th>Approved By</th></tr></thead>
+          <tbody id="teams-body"></tbody>
+        </table>
+      </div>
+    </div>
+ 
+    <div class="tab-panel" id="tab-games">
+      <div class="game-controls">
+        <label style="color:var(--muted); font-size:13px;">Game:</label>
+        <select id="game-select"></select>
+        <button class="btn-secondary" onclick="addGame()">+ Add New Game</button>
+        <button class="btn-danger" onclick="deleteCurrentGame()">Delete This Game</button>
+      </div>
+      <div class="table-scroll">
+        <table class="admin-table">
+          <thead><tr><th>Team</th><th>Placement</th><th>P1 Kills</th><th>P1 Assists</th><th>P1 Acc%</th><th>P1 HS</th><th>P2 Kills</th><th>P2 Assists</th><th>P2 Acc%</th><th>P2 HS</th></tr></thead>
+          <tbody id="games-body"></tbody>
+        </table>
+      </div>
+    </div>
+ 
+    <div class="tab-panel" id="tab-settings">
+      <div class="settings-row">
+        <label>Points per Kill</label>
+        <input type="number" id="points-per-kill" step="0.5">
+      </div>
+      <h3 style="font-family:'Rajdhani',sans-serif; margin:20px 0 8px;">Placement → Points Scale</h3>
+      <div class="placement-scale-grid" id="placement-scale-grid"></div>
+    </div>
+ 
+    <div id="save-bar">
+      <button class="btn-primary" onclick="saveAll()">Save All Changes</button>
+      <span id="save-status"></span>
+    </div>
+  </div>
+ 
+</div>
 </div>
  
 <script>
 /* ============================================================
-   CONFIG — fill these in before you deploy
+   CONFIG — fill this in before you deploy
    ============================================================ */
 const CONFIG = {
-  // Your Cloudflare Worker URL (see tournament-worker.js). This one Worker
-  // now handles everything: tournament data (via the admin panel) and
-  // Twitch live-status checks. No Google Sheet needed anymore.
-  API_URL: "PASTE_YOUR_WORKER_URL_HERE",
- 
-  // How often to re-check everything, in milliseconds
+  API_URL: "PASTE_YOUR_WORKER_URL_HERE", // your deployed tournament-worker.js URL
   REFRESH_INTERVAL_MS: 30000,
 };
  
 /* ============================================================
-   Demo data — shown until CONFIG.API_URL is set
+   VIEW TOGGLE — one file, two screens
+   ============================================================ */
+function showAdminView(){
+  document.getElementById("public-view").style.display = "none";
+  document.getElementById("admin-view").style.display = "block";
+  bootAdmin();
+}
+function showPublicView(){
+  document.getElementById("admin-view").style.display = "none";
+  document.getElementById("public-view").style.display = "block";
+}
+ 
+/* ============================================================
+   PUBLIC SITE
    ============================================================ */
 const DEMO_TEAMS = [
   { team: "Team Alpha", p1: "WhoIsMike416", p1twitch: "whoismike416", p2: "iFolf", p2twitch: "ifolf", points: 28 },
@@ -316,13 +313,56 @@ const DEMO_BOUNTIES = [
 ];
  
 let teams = [];
+let bounties = [];
  
 function setStatus(text, live){
   document.getElementById("status-text").textContent = text;
   document.getElementById("status-dot").classList.toggle("on", !!live);
 }
  
-let bounties = [];
+async function loadLeaderboard(){
+  if (!CONFIG.API_URL || CONFIG.API_URL.startsWith("PASTE_")){
+    teams = DEMO_TEAMS.slice();
+    bounties = DEMO_BOUNTIES.slice();
+    setStatus("Demo data — connect the tournament backend to go live", false);
+    renderBoard();
+    return;
+  }
+  try{
+    const res = await fetch(CONFIG.API_URL + "/public/data?t=" + Date.now());
+    if (!res.ok) throw new Error("data fetch failed: " + res.status);
+    const body = await res.json();
+    teams = (body.leaderboard || []).map(t => ({ team: t.team, p1: t.p1, p1twitch: t.p1twitch, p2: t.p2, p2twitch: t.p2twitch, points: t.totalPoints }));
+    bounties = (body.bounties || []).map(b => ({ team: b.team, name: b.name, twitch: b.twitch, kills: b.kills, assists: b.assists, accuracy: b.accuracy, headshots: b.headshots }));
+    setStatus("Synced with tournament backend", true);
+  } catch(err){
+    console.error(err);
+    setStatus("Couldn't reach the backend — showing last known data", false);
+    if (!teams.length) teams = DEMO_TEAMS.slice();
+    if (!bounties.length) bounties = DEMO_BOUNTIES.slice();
+  }
+  renderBoard();
+}
+ 
+function rosterCell(t){
+  const link = (name, login) => !login ? escapeHtml(name) : `<a class="twitch-link" href="https://twitch.tv/${encodeURIComponent(login)}" target="_blank" rel="noopener">${escapeHtml(name)}</a>`;
+  return `${link(t.p1, t.p1twitch)}<br>${link(t.p2, t.p2twitch)}`;
+}
+ 
+function renderBoard(){
+  const sorted = teams.slice().sort((a,b) => b.points - a.points);
+  const tbody = document.getElementById("board-body");
+  tbody.innerHTML = "";
+  sorted.forEach((t, idx) => {
+    const rank = idx + 1;
+    const tr = document.createElement("tr");
+    if (rank <= 3) tr.classList.add("top" + rank);
+    tr.innerHTML = `<td class="rank-cell">#${rank}</td><td class="player-cell">${escapeHtml(t.team)}</td><td>${rosterCell(t)}</td><td class="score-cell">${t.points.toLocaleString()}</td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById("board-updated").textContent = "updated " + new Date().toLocaleTimeString();
+  updateSpotlightFaces(sorted);
+}
  
 let spotlightFaces = [];
 let spotlightIndex = 0;
@@ -354,8 +394,7 @@ function showSpotlightFace(i, animate){
     document.getElementById("spotlight-label").textContent = face.label;
     document.getElementById("spotlight-name").textContent = face.name;
     document.getElementById("spotlight-score").textContent = face.value;
-    document.getElementById("spotlight-dots").innerHTML =
-      spotlightFaces.map((_, idx) => `<span class="dot-ind${idx === i ? " active" : ""}"></span>`).join("");
+    document.getElementById("spotlight-dots").innerHTML = spotlightFaces.map((_, idx) => `<span class="dot-ind${idx === i ? " active" : ""}"></span>`).join("");
   };
   if (!animate){ apply(); return; }
   card.classList.add("spotlight-fade");
@@ -370,143 +409,209 @@ function startSpotlightRotation(){
   }, 4000);
 }
  
-async function loadLeaderboard(){
+function escapeHtml(str){
+  return String(str ?? "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+}
+ 
+loadLeaderboard();
+setInterval(loadLeaderboard, CONFIG.REFRESH_INTERVAL_MS);
+ 
+/* ============================================================
+   ADMIN PANEL
+   ============================================================ */
+let adminToken = sessionStorage.getItem("kns_admin_token") || null;
+let adminData = null;
+let currentGameIndex = 0;
+let adminBooted = false;
+ 
+async function bootAdmin(){
+  if (adminBooted && adminData){ showAdminApp(); return; }
+  if (!adminToken){ showAdminLogin(); return; }
+  const loaded = await fetchAdminData();
+  if (!loaded) return;
+  adminData = loaded;
+  adminBooted = true;
+  showAdminApp();
+  renderTeams();
+  renderGameSelect();
+  renderGameStats();
+  renderSettings();
+}
+ 
+async function doLogin(){
+  const password = document.getElementById("login-password").value;
+  const errEl = document.getElementById("login-error");
+  errEl.textContent = "";
   if (!CONFIG.API_URL || CONFIG.API_URL.startsWith("PASTE_")){
-    teams = DEMO_TEAMS.slice();
-    bounties = DEMO_BOUNTIES.slice();
-    setStatus("Demo data — connect the tournament backend to go live", false);
-    renderBoard();
+    errEl.textContent = "Set CONFIG.API_URL near the top of this file first.";
     return;
   }
   try{
-    const res = await fetch(CONFIG.API_URL + "/public/data?t=" + Date.now());
-    if (!res.ok) throw new Error("data fetch failed: " + res.status);
+    const res = await fetch(CONFIG.API_URL + "/admin/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password }) });
+    if (!res.ok){ errEl.textContent = "Wrong password."; return; }
     const body = await res.json();
-    teams = (body.leaderboard || []).map(t => ({
-      team: t.team, p1: t.p1, p1twitch: t.p1twitch, p2: t.p2, p2twitch: t.p2twitch, points: t.totalPoints,
-    }));
-    bounties = (body.bounties || []).map(b => ({
-      team: b.team, name: b.name, twitch: b.twitch, kills: b.kills, assists: b.assists, accuracy: b.accuracy, headshots: b.headshots,
-    }));
-    setStatus("Synced with tournament backend", true);
+    adminToken = body.token;
+    sessionStorage.setItem("kns_admin_token", adminToken);
+    await bootAdmin();
   } catch(err){
     console.error(err);
-    setStatus("Couldn't reach the backend — showing last known data", false);
-    if (!teams.length) teams = DEMO_TEAMS.slice();
-    if (!bounties.length) bounties = DEMO_BOUNTIES.slice();
+    errEl.textContent = "Couldn't reach the server.";
   }
-  renderBoard();
 }
  
-function rosterCell(t){
-  const link = (name, login) => {
-    if (!login) return escapeHtml(name);
-    const isLive = !!liveMap[login];
-    return `<a class="twitch-link" href="https://twitch.tv/${encodeURIComponent(login)}" target="_blank" rel="noopener">${escapeHtml(name)}${isLive ? ' <span class="live-tag">LIVE</span>' : ""}</a>`;
-  };
-  return `${link(t.p1, t.p1twitch)}<br>${link(t.p2, t.p2twitch)}`;
+async function fetchAdminData(){
+  const res = await fetch(CONFIG.API_URL + "/admin/data", { headers: { Authorization: "Bearer " + adminToken } });
+  if (res.status === 401){ sessionStorage.removeItem("kns_admin_token"); adminToken = null; showAdminLogin(); return null; }
+  if (!res.ok) throw new Error("failed to load data: " + res.status);
+  return await res.json();
 }
  
-function renderBoard(){
-  const sorted = teams.slice().sort((a,b) => b.points - a.points);
-  const tbody = document.getElementById("board-body");
+function showAdminLogin(){
+  document.getElementById("login-screen").style.display = "block";
+  document.getElementById("admin-app").style.display = "none";
+}
+function showAdminApp(){
+  document.getElementById("login-screen").style.display = "none";
+  document.getElementById("admin-app").style.display = "block";
+}
+ 
+/* ---------------- Teams tab ---------------- */
+function renderTeams(){
+  const tbody = document.getElementById("teams-body");
   tbody.innerHTML = "";
-  sorted.forEach((t, idx) => {
-    const rank = idx + 1;
+  adminData.teams.forEach((t, idx) => {
     const tr = document.createElement("tr");
-    if (rank <= 3) tr.classList.add("top" + rank);
     tr.innerHTML = `
-      <td class="rank-cell">#${rank}</td>
-      <td class="player-cell">${escapeHtml(t.team)}</td>
-      <td>${rosterCell(t)}</td>
-      <td class="score-cell">${t.points.toLocaleString()}</td>
+      <td><input type="text" value="${esc(t.name)}" onchange="adminData.teams[${idx}].name=this.value"></td>
+      <td><input type="text" value="${esc(t.player1)}" onchange="adminData.teams[${idx}].player1=this.value"></td>
+      <td><input type="text" value="${esc(t.player1Twitch)}" onchange="adminData.teams[${idx}].player1Twitch=this.value"></td>
+      <td><input type="text" value="${esc(t.player2)}" onchange="adminData.teams[${idx}].player2=this.value"></td>
+      <td><input type="text" value="${esc(t.player2Twitch)}" onchange="adminData.teams[${idx}].player2Twitch=this.value"></td>
+      <td><input type="text" value="${esc(t.approvedBy)}" onchange="adminData.teams[${idx}].approvedBy=this.value"></td>
     `;
     tbody.appendChild(tr);
   });
-  document.getElementById("board-updated").textContent = "updated " + new Date().toLocaleTimeString();
- 
-  updateSpotlightFaces(sorted);
-  renderStreams(sorted);
 }
  
-/* ---------- Twitch live status via Cloudflare Worker proxy ---------- */
-let liveMap = {}; // { loginLower: streamData }
+/* ---------------- Games tab ---------------- */
+function renderGameSelect(){
+  const sel = document.getElementById("game-select");
+  sel.innerHTML = "";
+  adminData.games.forEach((g, idx) => {
+    const opt = document.createElement("option");
+    opt.value = idx; opt.textContent = "Game " + g.gameNumber;
+    sel.appendChild(opt);
+  });
+  if (currentGameIndex >= adminData.games.length) currentGameIndex = Math.max(0, adminData.games.length - 1);
+  sel.value = currentGameIndex;
+  sel.onchange = () => { currentGameIndex = Number(sel.value); renderGameStats(); };
+}
  
-async function loadLiveStatus(){
-  const logins = teams.flatMap(t => [t.p1twitch, t.p2twitch]).filter(Boolean);
-  if (!CONFIG.API_URL || CONFIG.API_URL.startsWith("PASTE_")){
-    document.getElementById("live-count").textContent = "connect the tournament backend to enable live status";
-    renderStreams(teams);
+function addGame(){
+  const nextNum = adminData.games.length ? Math.max(...adminData.games.map(g => g.gameNumber)) + 1 : 1;
+  adminData.games.push({ gameNumber: nextNum, placements: {}, stats: {} });
+  currentGameIndex = adminData.games.length - 1;
+  renderGameSelect();
+  renderGameStats();
+}
+ 
+function deleteCurrentGame(){
+  if (!adminData.games.length) return;
+  if (!confirm("Delete Game " + adminData.games[currentGameIndex].gameNumber + "? This can't be undone until you save, but once saved it's gone.")) return;
+  adminData.games.splice(currentGameIndex, 1);
+  currentGameIndex = 0;
+  renderGameSelect();
+  renderGameStats();
+}
+ 
+function renderGameStats(){
+  const tbody = document.getElementById("games-body");
+  tbody.innerHTML = "";
+  if (!adminData.games.length){
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; color:var(--muted); padding:20px;">No games yet — click "+ Add New Game" to start.</td></tr>`;
     return;
   }
-  if (!logins.length) return;
+  const game = adminData.games[currentGameIndex];
+  if (!game.placements) game.placements = {};
+  if (!game.stats) game.stats = {};
+ 
+  adminData.teams.forEach((t) => {
+    if (!game.stats[t.id]) game.stats[t.id] = { p1: {}, p2: {} };
+    const s = game.stats[t.id];
+    const placement = game.placements[t.id] ?? "";
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td style="font-weight:600;">${esc(t.name)}</td>
+      <td><input type="number" min="1" value="${placement}" onchange="setPlacement(${t.id}, this.value)"></td>
+      <td><input type="number" min="0" value="${s.p1.kills ?? ''}" onchange="setStat(${t.id},'p1','kills',this.value)"></td>
+      <td><input type="number" min="0" value="${s.p1.assists ?? ''}" onchange="setStat(${t.id},'p1','assists',this.value)"></td>
+      <td><input type="number" min="0" max="100" value="${s.p1.accuracy ?? ''}" onchange="setStat(${t.id},'p1','accuracy',this.value)"></td>
+      <td><input type="number" min="0" value="${s.p1.headshots ?? ''}" onchange="setStat(${t.id},'p1','headshots',this.value)"></td>
+      <td><input type="number" min="0" value="${s.p2.kills ?? ''}" onchange="setStat(${t.id},'p2','kills',this.value)"></td>
+      <td><input type="number" min="0" value="${s.p2.assists ?? ''}" onchange="setStat(${t.id},'p2','assists',this.value)"></td>
+      <td><input type="number" min="0" max="100" value="${s.p2.accuracy ?? ''}" onchange="setStat(${t.id},'p2','accuracy',this.value)"></td>
+      <td><input type="number" min="0" value="${s.p2.headshots ?? ''}" onchange="setStat(${t.id},'p2','headshots',this.value)"></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+ 
+function setPlacement(teamId, value){
+  const game = adminData.games[currentGameIndex];
+  game.placements[teamId] = value === "" ? null : Number(value);
+}
+function setStat(teamId, slot, field, value){
+  const game = adminData.games[currentGameIndex];
+  game.stats[teamId][slot][field] = value === "" ? null : Number(value);
+}
+ 
+/* ---------------- Settings tab ---------------- */
+function renderSettings(){
+  document.getElementById("points-per-kill").value = adminData.settings.pointsPerKill;
+  document.getElementById("points-per-kill").onchange = (e) => { adminData.settings.pointsPerKill = Number(e.target.value); };
+ 
+  const grid = document.getElementById("placement-scale-grid");
+  grid.innerHTML = "";
+  const placements = Object.keys(adminData.settings.placementPoints).sort((a,b) => Number(a)-Number(b));
+  placements.forEach((p) => {
+    const div = document.createElement("div");
+    div.innerHTML = `<label>${p===placements[0] ? "1st" : "#" + p}</label><input type="number" value="${adminData.settings.placementPoints[p]}" onchange="adminData.settings.placementPoints['${p}']=Number(this.value)">`;
+    grid.appendChild(div);
+  });
+}
+ 
+/* ---------------- Save ---------------- */
+async function saveAll(){
+  const statusEl = document.getElementById("save-status");
+  statusEl.textContent = "Saving…";
   try{
-    const url = CONFIG.API_URL + "/streams?logins=" + encodeURIComponent(logins.join(","));
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("worker fetch failed: " + res.status);
-    const data = await res.json(); // expected: { streams: [ {user_login, title, viewer_count, thumbnail_url, game_name}, ... ] }
-    liveMap = {};
-    (data.streams || []).forEach(s => { liveMap[s.user_login.toLowerCase()] = s; });
-    document.getElementById("live-count").textContent = `${data.streams?.length || 0} of ${logins.length} live now`;
+    const res = await fetch(CONFIG.API_URL + "/admin/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + adminToken },
+      body: JSON.stringify(adminData),
+    });
+    if (res.status === 401){ statusEl.textContent = "Session expired — log in again."; sessionStorage.removeItem("kns_admin_token"); adminToken = null; showAdminLogin(); return; }
+    if (!res.ok) throw new Error("save failed: " + res.status);
+    statusEl.textContent = "Saved " + new Date().toLocaleTimeString();
   } catch(err){
     console.error(err);
-    document.getElementById("live-count").textContent = "couldn't reach Twitch worker";
+    statusEl.textContent = "Couldn't save — check your connection and try again.";
   }
-  renderBoard();
 }
  
-function renderStreams(list){
-  const grid = document.getElementById("stream-grid");
-  grid.innerHTML = "";
-  // flatten each team's two players into individual streamer entries
-  const streamers = list.flatMap(t => [
-    { name: t.p1, twitch: t.p1twitch, team: t.team },
-    { name: t.p2, twitch: t.p2twitch, team: t.team },
-  ]).filter(s => s.twitch);
- 
-  // live first, then alphabetical
-  streamers.sort((a,b) => {
-    const la = !!liveMap[a.twitch], lb = !!liveMap[b.twitch];
-    if (la !== lb) return la ? -1 : 1;
-    return a.name.localeCompare(b.name);
+/* ---------------- admin tabs ---------------- */
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("tab-" + btn.dataset.tab).classList.add("active");
   });
+});
  
-  streamers.forEach(s => {
-    const live = liveMap[s.twitch];
-    const card = document.createElement("a");
-    card.className = "stream-card";
-    card.href = `https://twitch.tv/${encodeURIComponent(s.twitch)}`;
-    card.target = "_blank"; card.rel = "noopener";
-    card.innerHTML = `
-      <div class="thumb-wrap ${live ? "" : "offline"}">
-        ${live
-          ? `<img src="${(live.thumbnail_url || "").replace("{width}","440").replace("{height}","248")}" alt="${escapeHtml(s.name)} stream preview">
-             <span class="live-badge"><span class="p"></span>LIVE</span>
-             <span class="viewer-badge">${(live.viewer_count ?? 0).toLocaleString()} viewers</span>`
-          : `<div class="ring"></div>`
-        }
-      </div>
-      <div class="stream-info">
-        <p class="stream-name">${escapeHtml(s.name)}</p>
-        <p class="stream-title">${live ? escapeHtml(live.title || "") : escapeHtml(s.team)}</p>
-        <p class="stream-status">${live ? escapeHtml(live.game_name || "Fortnite") : "Offline"}</p>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
+function esc(str){
+  return String(str ?? "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 }
- 
-function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
-}
- 
-/* ---------- boot ---------- */
-async function tick(){
-  await loadLeaderboard();
-  await loadLiveStatus();
-}
-tick();
-setInterval(tick, CONFIG.REFRESH_INTERVAL_MS);
 </script>
 </body>
 </html>
