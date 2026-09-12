@@ -1,5 +1,3 @@
-
-Index · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -287,7 +285,7 @@ Index · HTML
     <div class="streams" id="stream-grid"></div>
   </section>
  
-  <footer>K&S FN Tournament · built for the cup · data via Google Sheets + Twitch Helix API</footer>
+  <footer>K&S FN Tournament · built for the cup · data via the tournament backend + Twitch Helix API</footer>
 </div>
  
 <script>
@@ -295,28 +293,17 @@ Index · HTML
    CONFIG — fill these in before you deploy
    ============================================================ */
 const CONFIG = {
-  // Google Sheet published as CSV:
-  // File > Share > Publish to web > select the sheet tab > CSV > copy the URL here
-  SHEET_CSV_URL: "PASTE_YOUR_PUBLISHED_SHEET_CSV_URL_HERE",
- 
-  // Your Cloudflare Worker URL (see twitch-worker.js) that proxies Twitch Helix.
-  // Leave blank to skip live-status checks (Twitch section will just stay empty).
-  TWITCH_WORKER_URL: "PASTE_YOUR_WORKER_URL_HERE",
+  // Your Cloudflare Worker URL (see tournament-worker.js). This one Worker
+  // now handles everything: tournament data (via the admin panel) and
+  // Twitch live-status checks. No Google Sheet needed anymore.
+  API_URL: "PASTE_YOUR_WORKER_URL_HERE",
  
   // How often to re-check everything, in milliseconds
   REFRESH_INTERVAL_MS: 30000,
- 
-  // Publish the single "Tournament" tab to the web as CSV. That one tab
-  // holds Scoring Settings, Team Placements, Player Stats, Leaderboard,
-  // and Bounties — the site automatically finds the Leaderboard section
-  // inside the CSV (the row with both "Team" and "Total Points" headers)
-  // and ignores everything else.
-  // Leaderboard columns it looks for (case-insensitive header match):
-  //   Team, Player 1, Player 1 Twitch, Player 2, Player 2 Twitch, Total Kills, Placement Points, Total Points, Approved By
 };
  
 /* ============================================================
-   Demo data — shown until CONFIG.SHEET_CSV_URL is set
+   Demo data — shown until CONFIG.API_URL is set
    ============================================================ */
 const DEMO_TEAMS = [
   { team: "Team Alpha", p1: "WhoIsMike416", p1twitch: "whoismike416", p2: "iFolf", p2twitch: "ifolf", points: 28 },
@@ -333,112 +320,6 @@ let teams = [];
 function setStatus(text, live){
   document.getElementById("status-text").textContent = text;
   document.getElementById("status-dot").classList.toggle("on", !!live);
-}
- 
-/* ---------- tiny CSV parser (handles quoted fields with commas) ---------- */
-function parseCSV(text){
-  const rows = [];
-  let row = [], field = "", inQuotes = false;
-  for (let i = 0; i < text.length; i++){
-    const c = text[i], next = text[i+1];
-    if (inQuotes){
-      if (c === '"' && next === '"'){ field += '"'; i++; }
-      else if (c === '"'){ inQuotes = false; }
-      else { field += c; }
-    } else {
-      if (c === '"'){ inQuotes = true; }
-      else if (c === ','){ row.push(field); field = ""; }
-      else if (c === '\n' || c === '\r'){
-        if (field !== "" || row.length){ row.push(field); rows.push(row); row = []; field = ""; }
-        if (c === '\r' && next === '\n') i++;
-      } else { field += c; }
-    }
-  }
-  if (field !== "" || row.length){ row.push(field); rows.push(row); }
-  return rows.filter(r => r.some(f => f.trim() !== ""));
-}
- 
-function rowsToTeams(rows){
-  // The published CSV now contains every section of the sheet (Points
-  // Reference, Team Placements, Player Kills, Leaderboard) since they're
-  // all on one tab. Find the Leaderboard header row specifically — it's
-  // the only row containing both "team" and "total point" — then read
-  // data rows until a blank row (the sheet's section spacer) is hit.
-  let headerRowIdx = -1;
-  for (let i = 0; i < rows.length; i++){
-    const cells = rows[i].map(c => c.trim().toLowerCase());
-    const hasTeam = cells.some(c => c === "team");
-    const hasTotalPoints = cells.some(c => c.includes("total point"));
-    if (hasTeam && hasTotalPoints){ headerRowIdx = i; break; }
-  }
-  if (headerRowIdx === -1) return [];
- 
-  const header = rows[headerRowIdx].map(h => h.trim().toLowerCase());
-  const iTeam = header.findIndex(h => h === "team");
-  const iP1 = header.findIndex(h => h.includes("player 1") && !h.includes("twitch"));
-  const iP1T = header.findIndex(h => h.includes("player 1") && h.includes("twitch"));
-  const iP2 = header.findIndex(h => h.includes("player 2") && !h.includes("twitch"));
-  const iP2T = header.findIndex(h => h.includes("player 2") && h.includes("twitch"));
-  const iPoints = header.findIndex(h => h.includes("total point"));
- 
-  const teams = [];
-  for (let i = headerRowIdx + 1; i < rows.length; i++){
-    const r = rows[i];
-    const isBlank = !r.some(f => f.trim() !== "");
-    if (isBlank) break; // hit the gap before the next section (or end of sheet)
-    const team = (r[iTeam] || "").trim();
-    if (!team) continue;
-    teams.push({
-      team,
-      p1: (r[iP1] || "").trim(),
-      p1twitch: (r[iP1T] || "").trim().replace(/^@/, "").toLowerCase(),
-      p2: (r[iP2] || "").trim(),
-      p2twitch: (r[iP2T] || "").trim().replace(/^@/, "").toLowerCase(),
-      points: parseFloat(r[iPoints]) || 0,
-    });
-  }
-  return teams;
-}
- 
-function rowsToBounties(rows){
-  // Same trick as rowsToTeams, but finds the Bounties section instead —
-  // the row with both "player name" and "total kills" as headers.
-  let headerRowIdx = -1;
-  for (let i = 0; i < rows.length; i++){
-    const cells = rows[i].map(c => c.trim().toLowerCase());
-    const hasPlayerName = cells.some(c => c.includes("player name"));
-    const hasTotalKills = cells.some(c => c.includes("total kill"));
-    if (hasPlayerName && hasTotalKills){ headerRowIdx = i; break; }
-  }
-  if (headerRowIdx === -1) return [];
- 
-  const header = rows[headerRowIdx].map(h => h.trim().toLowerCase());
-  const iTeam = header.findIndex(h => h === "team");
-  const iName = header.findIndex(h => h.includes("player name"));
-  const iTwitch = header.findIndex(h => h.includes("twitch"));
-  const iKills = header.findIndex(h => h.includes("total kill"));
-  const iAssists = header.findIndex(h => h.includes("total assist"));
-  const iAccuracy = header.findIndex(h => h.includes("accuracy"));
-  const iHeadshots = header.findIndex(h => h.includes("headshot"));
- 
-  const bounties = [];
-  for (let i = headerRowIdx + 1; i < rows.length; i++){
-    const r = rows[i];
-    const isBlank = !r.some(f => f.trim() !== "");
-    if (isBlank) break;
-    const name = (r[iName] || "").trim();
-    if (!name) continue;
-    bounties.push({
-      team: (r[iTeam] || "").trim(),
-      name,
-      twitch: (r[iTwitch] || "").trim().replace(/^@/, "").toLowerCase(),
-      kills: parseFloat(r[iKills]) || 0,
-      assists: parseFloat(r[iAssists]) || 0,
-      accuracy: parseFloat(r[iAccuracy]) || 0,
-      headshots: parseFloat(r[iHeadshots]) || 0,
-    });
-  }
-  return bounties;
 }
  
 let bounties = [];
@@ -490,24 +371,27 @@ function startSpotlightRotation(){
 }
  
 async function loadLeaderboard(){
-  if (!CONFIG.SHEET_CSV_URL || CONFIG.SHEET_CSV_URL.startsWith("PASTE_")){
+  if (!CONFIG.API_URL || CONFIG.API_URL.startsWith("PASTE_")){
     teams = DEMO_TEAMS.slice();
     bounties = DEMO_BOUNTIES.slice();
-    setStatus("Demo data — connect a Google Sheet to go live", false);
+    setStatus("Demo data — connect the tournament backend to go live", false);
     renderBoard();
     return;
   }
   try{
-    const res = await fetch(CONFIG.SHEET_CSV_URL + (CONFIG.SHEET_CSV_URL.includes("?") ? "&" : "?") + "t=" + Date.now());
-    if (!res.ok) throw new Error("sheet fetch failed: " + res.status);
-    const text = await res.text();
-    const parsed = parseCSV(text);
-    teams = rowsToTeams(parsed);
-    bounties = rowsToBounties(parsed);
-    setStatus("Synced with tournament sheet", true);
+    const res = await fetch(CONFIG.API_URL + "/public/data?t=" + Date.now());
+    if (!res.ok) throw new Error("data fetch failed: " + res.status);
+    const body = await res.json();
+    teams = (body.leaderboard || []).map(t => ({
+      team: t.team, p1: t.p1, p1twitch: t.p1twitch, p2: t.p2, p2twitch: t.p2twitch, points: t.totalPoints,
+    }));
+    bounties = (body.bounties || []).map(b => ({
+      team: b.team, name: b.name, twitch: b.twitch, kills: b.kills, assists: b.assists, accuracy: b.accuracy, headshots: b.headshots,
+    }));
+    setStatus("Synced with tournament backend", true);
   } catch(err){
     console.error(err);
-    setStatus("Couldn't reach the sheet — showing last known data", false);
+    setStatus("Couldn't reach the backend — showing last known data", false);
     if (!teams.length) teams = DEMO_TEAMS.slice();
     if (!bounties.length) bounties = DEMO_BOUNTIES.slice();
   }
@@ -550,14 +434,14 @@ let liveMap = {}; // { loginLower: streamData }
  
 async function loadLiveStatus(){
   const logins = teams.flatMap(t => [t.p1twitch, t.p2twitch]).filter(Boolean);
-  if (!CONFIG.TWITCH_WORKER_URL || CONFIG.TWITCH_WORKER_URL.startsWith("PASTE_")){
-    document.getElementById("live-count").textContent = "connect a Twitch worker to enable live status";
+  if (!CONFIG.API_URL || CONFIG.API_URL.startsWith("PASTE_")){
+    document.getElementById("live-count").textContent = "connect the tournament backend to enable live status";
     renderStreams(teams);
     return;
   }
   if (!logins.length) return;
   try{
-    const url = CONFIG.TWITCH_WORKER_URL + "?logins=" + encodeURIComponent(logins.join(","));
+    const url = CONFIG.API_URL + "/streams?logins=" + encodeURIComponent(logins.join(","));
     const res = await fetch(url);
     if (!res.ok) throw new Error("worker fetch failed: " + res.status);
     const data = await res.json(); // expected: { streams: [ {user_login, title, viewer_count, thumbnail_url, game_name}, ... ] }
