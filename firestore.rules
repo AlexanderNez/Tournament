@@ -1,0 +1,39 @@
+rules_version = '2';
+
+// Sunset Horizon — Firestore security rules.
+// Anyone can READ the tournament data (that's the public leaderboard).
+// Only signed-in accounts listed in the `admins` collection can WRITE.
+//
+// To use: Firebase Console → Firestore Database → Rules → paste this in → Publish.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null &&
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    match /teams/{teamId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /games/{gameId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /bounties/{bountyId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Admins can read the admin list (needed to check their own access);
+    // nobody can write to it from the client — add admins from the Firebase Console instead.
+    match /admins/{uid} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+  }
+}

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sunset Horizon — Duos Cup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div class="wrap">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="ring"></div>
+      <div>
+        <h1>SUNSET <span class="accent">HORIZON</span></h1>
+        <p class="sub">Sunset Horizon Duos Cup — Ops Board</p>
+      </div>
+    </div>
+    <div class="status-pill" id="statusPill"><span class="dot"></span><span id="statusText">Connecting…</span></div>
+  </header>
+
+  <section class="hero">
+    <div class="panel">
+      <p class="eyebrow">// LIVE BRACKET TRACKING</p>
+      <h2 class="hero-title">Watch the <span class="accent">circle</span> close in.</h2>
+      <p>Real-time cup standings, updated the moment staff enter each game's results — refreshes automatically for anyone watching.</p>
+    </div>
+
+    <div class="panel spotlight">
+      <div>
+        <p class="label" id="spotlightLabel">MOST HEADSHOTS</p>
+        <p class="who" id="spotlightWho">—</p>
+        <p class="metric" id="spotlightMetric">Waiting for stats…</p>
+      </div>
+      <div class="dots" id="spotlightDots"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Tournament <span class="accent">Bounties</span></h2>
+      <span class="meta">$20 each — combined duo totals across all 3 games</span>
+    </div>
+  </section>
+
+  <section class="bounty-grid" id="bountyGrid"></section>
+
+  <section>
+    <div class="section-head">
+      <h2>LEADER<span class="accent">BOARD</span></h2>
+      <span class="meta" id="updatedMeta">updated —</span>
+    </div>
+  </section>
+
+  <section class="board">
+    <table>
+      <thead>
+        <tr><th>Rank</th><th>Team</th><th>Roster</th><th>Points</th></tr>
+      </thead>
+      <tbody id="leaderboardBody">
+        <tr><td colspan="4" class="empty-state">Loading standings…</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer class="footer">
+    Sunset Horizon Tournament · built for the cup · <a href="admin.html">Staff Login</a>
+  </footer>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
